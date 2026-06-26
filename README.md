@@ -86,13 +86,6 @@ isc2-cc-exam_practice/
 
 ---
 
-## 🧑‍💻 Built By
-
-**Ankush** — B.Tech CSE · Himachal Institute of Engineering & Technology  
-Pursuing EC-Council CPENT | CTF Competitor | Security Researcher
-
----
-
 ## ⚠️ Disclaimer
 
 This is a **community study tool**, not affiliated with or endorsed by ISC2.  
