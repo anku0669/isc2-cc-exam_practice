@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ISC2 CC — HARD MODE | 100 Brutal Questions</title>
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --card: #161b24;
+    --border: #1e2532;
+    --accent: #00d4ff;
+    --accent2: #ff3e6c;
+    --accent3: #39ff14;
+    --gold: #ffd700;
+    --text: #c9d1d9;
+    --muted: #586069;
+    --correct: #1a3a1a;
+    --correct-border: #39ff14;
+    --wrong: #3a1a1a;
+    --wrong-border: #ff3e6c;
+    --font: 'Courier New', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #0a0c10 0%, #0d1117 50%, #0a0c10 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 80px,
+      rgba(0,212,255,0.03) 80px,
+      rgba(0,212,255,0.03) 81px
+    );
+  }
+  .skull { font-size: 2.5rem; display: block; margin-bottom: .5rem; }
+  header h1 {
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    color: var(--accent2);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(255,62,108,.5);
+  }
+  header p {
+    color: var(--muted);
+    font-size: .8rem;
+    margin-top: .4rem;
+    letter-spacing: .05em;
+  }
+  .domain-badge {
+    display: inline-block;
+    background: rgba(0,212,255,.08);
+    border: 1px solid rgba(0,212,255,.25);
+    color: var(--accent);
+    font-size: .7rem;
+    padding: .2rem .7rem;
+    border-radius: 2px;
+    margin: .2rem;
+    letter-spacing: .06em;
+  }
+
+  /* ── SCOREBOARD ── */
+  #scoreboard {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    padding: 1rem 1.5rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .stat { text-align: center; }
+  .stat-val { font-size: 1.5rem; font-weight: 700; }
+  .stat-label { font-size: .65rem; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+  #score-display { color: var(--accent3); }
+  #wrong-display { color: var(--accent2); }
+  #remain-display { color: var(--accent); }
+  #pct-display { color: var(--gold); }
+
+  /* ── FILTER BAR ── */
+  #filter-bar {
+    display: flex; flex-wrap: wrap; gap: .5rem;
+    padding: .8rem 1.5rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+  }
+  #filter-bar span { font-size: .7rem; color: var(--muted); margin-right: .3rem; }
+  .filter-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--font);
+    font-size: .7rem;
+    padding: .3rem .7rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all .2s;
+    letter-spacing: .04em;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0,212,255,.06);
+  }
+  #reset-btn {
+    margin-left: auto;
+    background: rgba(255,62,108,.08);
+    border: 1px solid rgba(255,62,108,.3);
+    color: var(--accent2);
+    font-family: var(--font);
+    font-size: .7rem;
+    padding: .3rem .9rem;
+    cursor: pointer;
+    border-radius: 2px;
+    letter-spacing: .04em;
+    transition: all .2s;
+  }
+  #reset-btn:hover { background: rgba(255,62,108,.2); }
+
+  /* ── QUESTIONS ── */
+  #questions-container { padding: 1.5rem; max-width: 900px; margin: 0 auto; }
+
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 1.2rem;
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .question-card.answered { border-color: #2a3040; }
+
+  .q-header {
+    display: flex; align-items: flex-start; gap: .8rem;
+    padding: 1rem 1.2rem .8rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,.01);
+  }
+  .q-num {
+    font-size: .7rem;
+    color: var(--accent2);
+    font-weight: 700;
+    min-width: 2.4rem;
+    padding-top: .1rem;
+    letter-spacing: .05em;
+  }
+  .q-domain {
+    font-size: .6rem;
+    color: var(--muted);
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--border);
+    padding: .15rem .5rem;
+    border-radius: 2px;
+    white-space: nowrap;
+    margin-top: .1rem;
+    letter-spacing: .04em;
+  }
+  .q-text { font-size: .88rem; line-height: 1.55; color: var(--text); }
+  .q-scenario {
+    background: rgba(0,212,255,.04);
+    border-left: 2px solid var(--accent);
+    padding: .6rem .8rem;
+    margin-bottom: .7rem;
+    font-size: .82rem;
+    color: #8bb3d0;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .options { padding: .7rem 1.2rem 1rem; }
+  .option {
+    display: flex; align-items: flex-start; gap: .7rem;
+    padding: .6rem .8rem;
+    margin-bottom: .4rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all .15s;
+    background: transparent;
+  }
+  .option:hover:not(.locked) { border-color: var(--accent); background: rgba(0,212,255,.04); }
+  .option.correct { background: var(--correct); border-color: var(--correct-border); }
+  .option.wrong { background: var(--wrong); border-color: var(--wrong-border); }
+  .option.locked { cursor: default; }
+  .opt-letter {
+    font-size: .7rem;
+    font-weight: 700;
+    color: var(--muted);
+    min-width: 1.1rem;
+    padding-top: .1rem;
+  }
+  .option.correct .opt-letter { color: var(--correct-border); }
+  .option.wrong .opt-letter { color: var(--accent2); }
+  .opt-text { font-size: .83rem; line-height: 1.45; }
+
+  .explanation {
+    display: none;
+    background: rgba(0,212,255,.04);
+    border-top: 1px solid var(--border);
+    padding: .8rem 1.2rem;
+    font-size: .8rem;
+    line-height: 1.55;
+    color: #9bbfd0;
+  }
+  .explanation.show { display: block; }
+  .explanation strong { color: var(--accent3); }
+
+  /* ── RESULTS MODAL ── */
+  #results-modal {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.85);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  #results-modal.show { display: flex; }
+  .modal-box {
+    background: var(--card);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    padding: 2.5rem;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 0 60px rgba(0,212,255,.15);
+  }
+  .modal-box h2 { color: var(--accent); font-size: 1.3rem; margin-bottom: .5rem; letter-spacing: .06em; }
+  .modal-score { font-size: 3rem; font-weight: 700; margin: 1rem 0 .3rem; }
+  .modal-grade { font-size: .9rem; color: var(--muted); margin-bottom: 1.2rem; }
+  .modal-close {
+    background: rgba(0,212,255,.1);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: var(--font);
+    padding: .6rem 1.5rem;
+    cursor: pointer;
+    font-size: .8rem;
+    border-radius: 3px;
+    transition: all .2s;
+  }
+  .modal-close:hover { background: rgba(0,212,255,.25); }
+
+  .progress-bar-wrap {
+    height: 3px;
+    background: var(--border);
+    margin: 1rem 0;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    transition: width .3s;
+  }
+
+  @media(max-width:600px){
+    header { padding: 1.5rem 1rem; }
+    #scoreboard { gap: 1rem; }
+    .stat-val { font-size: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="skull">💀</span>
+  <h1>ISC2 CC — HARD MODE</h1>
+  <p>100 Scenario-Based Questions · All 5 Domains · No Mercy</p>
+  <div style="margin-top:.8rem">
+    <span class="domain-badge">D1: Security Principles</span>
+    <span class="domain-badge">D2: BC/DR/IR</span>
+    <span class="domain-badge">D3: Access Control</span>
+    <span class="domain-badge">D4: Network Security</span>
+    <span class="domain-badge">D5: Security Operations</span>
+  </div>
+</header>
+
+<div id="scoreboard">
+  <div class="stat"><div class="stat-val" id="score-display">0</div><div class="stat-label">Correct</div></div>
+  <div class="stat"><div class="stat-val" id="wrong-display">0</div><div class="stat-label">Wrong</div></div>
+  <div class="stat"><div class="stat-val" id="remain-display">100</div><div class="stat-label">Remaining</div></div>
+  <div class="stat"><div class="stat-val" id="pct-display">—</div><div class="stat-label">Score %</div></div>
+</div>
+
+<div id="filter-bar">
+  <span>FILTER:</span>
+  <button class="filter-btn active" onclick="filterDomain('all',this)">ALL</button>
+  <button class="filter-btn" onclick="filterDomain('D1',this)">Domain 1</button>
+  <button class="filter-btn" onclick="filterDomain('D2',this)">Domain 2</button>
+  <button class="filter-btn" onclick="filterDomain('D3',this)">Domain 3</button>
+  <button class="filter-btn" onclick="filterDomain('D4',this)">Domain 4</button>
+  <button class="filter-btn" onclick="filterDomain('D5',this)">Domain 5</button>
+  <button id="reset-btn" onclick="resetAll()">↺ RESET ALL</button>
+</div>
+
+<div id="questions-container"></div>
+
+<div id="results-modal">
+  <div class="modal-box">
+    <h2>⚡ HARD MODE COMPLETE</h2>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="modal-bar"></div></div>
+    <div class="modal-score" id="modal-score-text"></div>
+    <div class="modal-grade" id="modal-grade-text"></div>
+    <button class="modal-close" onclick="document.getElementById('results-modal').classList.remove('show')">REVIEW ANSWERS</button>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  // ───────────────────── DOMAIN 1: Security Principles ─────────────────────
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`A healthcare organization stores patient data encrypted with AES-256. An internal audit reveals the encryption key is stored in the same database as the ciphertext, protected only by file system permissions. Which principle is MOST directly violated?`,
+    opts:["Availability — the data cannot be easily recovered","Confidentiality — the key proximity defeats encryption's purpose","Integrity — keys and data should be hash-verified together","Non-repudiation — audit trails are missing"],
+    answer:1,
+    exp:`Storing the key with the ciphertext is equivalent to leaving a safe's combination taped to the door. <strong>Confidentiality</strong> is directly undermined because any attacker who exfiltrates the database also gets the key. AES-256 is strong, but key management failures render it moot.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`During a risk assessment, an analyst determines that a threat has a 30% annual likelihood of occurring and that a successful exploitation would result in $500,000 in losses. A proposed control costs $100,000 annually and would reduce likelihood to 5%. What is the annualized loss expectancy BEFORE the control, and does the control justify its cost?`,
+    opts:["ALE = $150,000; control is not cost-justified","ALE = $150,000; control saves $125,000/yr so it IS justified","ALE = $500,000; control is cost-justified","ALE = $100,000; control is marginally justified"],
+    answer:1,
+    exp:`ALE = SLE × ARO = $500,000 × 0.30 = <strong>$150,000</strong>. With the control, ALE drops to $500,000 × 0.05 = $25,000. Annual savings = $150,000 − $25,000 = <strong>$125,000</strong>, which exceeds the $100,000 control cost by $25,000. The control is cost-justified.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`A CISO receives a legal order requiring the organization to produce all emails from a specific executive over the past three years. The organization's email retention policy automatically purges emails after 18 months. No litigation hold was ever issued. Which governance failure is PRIMARILY responsible?`,
+    opts:["Lack of a data classification policy","Absence of a legal hold / litigation hold process","Insufficient backup frequency","Non-compliance with the ISC2 Code of Ethics"],
+    answer:1,
+    exp:`A <strong>litigation hold</strong> (legal hold) suspends normal retention/deletion schedules when litigation is reasonably anticipated. Without this process, routine purging destroyed evidence subject to discovery — a serious legal and governance failure. Data classification and backup frequency are secondary issues.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`An analyst classifies a risk as "accepted" after management reviews and decides no controls will be implemented. Six months later the threat materializes and causes significant damage. Under the ISC2 Code of Ethics, what was the security professional's CORRECT obligation after management's decision?`,
+    opts:["Implement controls anyway to protect the organization","Escalate outside the organization to regulators immediately","Document the decision, communicate residual risk clearly, and respect management's authority","Resign to avoid being associated with the decision"],
+    answer:2,
+    exp:`The ISC2 Code of Ethics requires acting honorably and providing competent service. Security professionals must <strong>clearly communicate residual risk</strong> and document acceptance decisions — but they must also <strong>respect lawful managerial authority</strong>. Unilateral action or immediate external escalation would be inappropriate unless illegal activity was involved.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`An organization implements a control that automatically logs all failed authentication attempts and generates an alert after five consecutive failures. Which security control classification applies?`,
+    opts:["Preventive-Technical","Detective-Technical","Corrective-Administrative","Deterrent-Physical"],
+    answer:1,
+    exp:`Logging failures and generating alerts <strong>detects</strong> a potential brute-force attack after it is occurring — it does not prevent the attempts. The mechanism is implemented through technology (software/log system), making it <strong>Detective-Technical</strong>. A preventive control would block the attempts before they occur (e.g., account lockout).`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`A user signs a document with their private key. The recipient verifies it with the sender's public key and the signature validates. Later, the sender claims they never signed the document. Which property of cryptography DIRECTLY refutes this claim?`,
+    opts:["Confidentiality","Integrity","Availability","Non-repudiation"],
+    answer:3,
+    exp:`<strong>Non-repudiation</strong> prevents a party from denying an action they performed. Since only the sender possesses their private key, a valid signature created by that key is cryptographic proof of their involvement. They cannot credibly repudiate the signature.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`A regulation requires that customer PII be protected from unauthorized disclosure. The security team implements full-disk encryption, strict ACLs, and DLP tools. An insider threat actor with legitimate access exfiltrates data through an approved business email account. Which element of the CIA triad was BREACHED, and which control type FAILED?`,
+    opts:["Integrity; Corrective control failed","Confidentiality; Detective/Preventive controls were insufficient","Availability; Administrative controls failed","Non-repudiation; Technical controls failed"],
+    answer:1,
+    exp:`The breach is a <strong>Confidentiality</strong> violation — PII was disclosed to an unauthorized party. The controls (encryption, ACLs) focused on perimeter/technical access, failing to detect or prevent data exfiltration through a trusted channel. Both <strong>detective</strong> (behavioral analytics) and <strong>preventive</strong> (content inspection on outbound email) controls were insufficient.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`An organization outsources its data processing to a cloud vendor. A breach at the vendor exposes customer records. The organization's privacy officer claims the vendor is solely responsible. Which risk management concept is MOST relevant to assessing this claim?`,
+    opts:["Risk transference eliminates the organization's liability entirely","Risk acceptance was applied by outsourcing","Organizations can transfer operational risk but not regulatory/legal accountability","The vendor's SLA determines all liability by law"],
+    answer:2,
+    exp:`<strong>Risk transference</strong> (e.g., via contract or insurance) shifts financial impact but does NOT eliminate the original organization's regulatory and legal accountability to its customers. Data controllers remain responsible for processor compliance under frameworks like GDPR. The organization cannot fully absolve itself by pointing to the vendor.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`During a tabletop exercise, a participant asks: "What's the difference between a policy and a standard?" Which answer is MOST accurate?`,
+    opts:["A policy is technical; a standard is managerial","A policy states high-level requirements; a standard specifies mandatory measures that implement the policy","A standard is aspirational; a policy is enforceable only through standards","They are interchangeable terms in most governance frameworks"],
+    answer:1,
+    exp:`A <strong>policy</strong> is a high-level statement of management intent and direction (the "what" and "why"). A <strong>standard</strong> specifies mandatory, specific requirements that must be met to comply with the policy (the "how much" and "exactly what"). Procedures describe step-by-step implementation. Guidelines are optional recommendations.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`Which authentication method provides the STRONGEST defense against real-time phishing attacks that relay OTP codes to the actual site?`,
+    opts:["SMS-based OTP","TOTP authenticator apps","FIDO2 / WebAuthn hardware security keys","Push notification MFA"],
+    answer:2,
+    exp:`<strong>FIDO2/WebAuthn</strong> uses cryptographic challenge-response bound to the <em>origin</em> (domain). Even if a user is phished to a fake site, the hardware key refuses to authenticate because the origin doesn't match — defeating real-time phishing relays. TOTP codes, SMS OTPs, and push notifications can all be proxied by an attacker in real-time.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`An organization uses a qualitative risk assessment methodology. A risk is rated "High" likelihood and "High" impact. After applying a control, it is re-rated "Low" likelihood and "High" impact. What term describes the risk level AFTER applying controls?`,
+    opts:["Inherent risk","Residual risk","Control risk","Secondary risk"],
+    answer:1,
+    exp:`<strong>Residual risk</strong> is the risk remaining after controls are applied. <strong>Inherent risk</strong> is the risk before any controls. The reduction in likelihood (High → Low) with unchanged impact represents the residual risk the organization now accepts or must further treat.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`A government agency classifies information as "SECRET." An employee downgrades the classification to "UNCLASSIFIED" without authorization to make sharing easier. Which governance element was VIOLATED?`,
+    opts:["A procedure","A standard","A policy","A regulation"],
+    answer:3,
+    exp:`Government classification systems are governed by <strong>regulations</strong> (e.g., Executive Orders in the US). Unauthorized declassification violates both the regulatory framework and organizational policy. This is distinct from internal procedures (step-by-step tasks) or standards (specific technical measures).`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`Two security analysts debate: Analyst A says "privacy is a subset of confidentiality." Analyst B says "they are related but distinct concepts." Who is correct, and why?`,
+    opts:["Analyst A — privacy is achieved solely through confidentiality controls","Analyst B — confidentiality protects information from unauthorized disclosure; privacy additionally governs the right to control one's own personal information and its use","Both are wrong — privacy and confidentiality are unrelated","Analyst A — ISC2 treats them as synonymous in the CC exam objectives"],
+    answer:1,
+    exp:`<strong>Analyst B is correct</strong>. Confidentiality prevents unauthorized disclosure (a technical security property). Privacy is a broader legal and ethical right — it concerns an individual's control over their own personal information, including how it is collected, used, shared, and retained. You can have confidentiality without respecting privacy (e.g., data shared only within a company but used beyond the person's consent).`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`Which of the following BEST illustrates "defense in depth" applied to a physical access scenario?`,
+    opts:["A reinforced steel door with a biometric scanner","Perimeter fencing → guard checkpoint → mantrap → biometric entry → CCTV → motion sensors","An alarm system that triggers if the door is forced open","A 24/7 security guard at the main entrance"],
+    answer:1,
+    exp:`<strong>Defense in depth</strong> requires multiple, independent layers of control so that failure of one layer does not result in total compromise. Option B demonstrates layered physical controls: perimeter barrier → human verification → anti-tailgating mantrap → biometric authentication → monitoring → detection — each layer providing independent assurance.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`A company's employees are required to complete annual security awareness training. This is BEST classified as which type of control?`,
+    opts:["Technical-Preventive","Administrative-Preventive","Physical-Detective","Administrative-Detective"],
+    answer:1,
+    exp:`Security awareness training is an <strong>administrative</strong> control (a policy/process-based control) and is <strong>preventive</strong> in nature — it aims to reduce the likelihood of human errors and social engineering attacks before they occur. It does not detect incidents, nor is it physical or technical in implementation.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`Under ISC2's CC curriculum, which of the following is an example of a "technical control"?`,
+    opts:["A background check policy for new employees","A fire suppression system in the server room","An intrusion detection system monitoring network traffic","Annual risk reviews by the CISO"],
+    answer:2,
+    exp:`An <strong>Intrusion Detection System (IDS)</strong> is a technical control — it is implemented through technology to identify security events. Background checks are administrative controls. Fire suppression is a physical control. Annual risk reviews are administrative controls.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`A threat actor exploits a zero-day vulnerability before any patch is available. From a risk management perspective, which statement is MOST accurate?`,
+    opts:["The risk could not have been managed because the vulnerability was unknown","Compensating controls could still have reduced impact or likelihood","Risk acceptance was the only option available","This demonstrates that vulnerability management is ineffective"],
+    answer:1,
+    exp:`Even without a patch, <strong>compensating controls</strong> such as network segmentation, application whitelisting, behavioral monitoring, least privilege, and data-at-rest encryption can significantly reduce the likelihood and impact of a zero-day exploit. Risk management does not require knowing every specific threat — layered controls provide resilience against unknown threats.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`An organization's data classification policy defines four levels: Public, Internal, Confidential, Restricted. A document contains both Internal and Confidential data. What classification should the ENTIRE document receive?`,
+    opts:["Internal, because most of the content is Internal","Confidential, because the most sensitive data determines the classification","The document must be split into two separate documents","Public, because it will be shared externally"],
+    answer:1,
+    exp:`When a document contains data at multiple classification levels, the entire document must be classified at the <strong>highest level</strong> present. A single Confidential data element elevates the whole document to Confidential, as controls must protect the most sensitive content within it.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`Which concept ensures that a system continues to function correctly even after a component fails, without exposing sensitive data?`,
+    opts:["Fail-secure (fail-closed)","Fail-open","High availability","Fault tolerance"],
+    answer:0,
+    exp:`<strong>Fail-secure (fail-closed)</strong> means the system defaults to a secure state upon failure — e.g., a door locks rather than opening if the electronic lock loses power. Fail-open defaults to permissive access upon failure, which prioritizes availability over security. Fault tolerance and high availability focus on continued operation, not security state on failure.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`A security analyst performs a Business Impact Analysis (BIA) and identifies that the payroll system has an RTO of 4 hours and an RPO of 1 hour. What do these values mean in practice?`,
+    opts:["The system must be restored within 4 hours; backups must occur at most every 1 hour","The system can be down for 4 hours total per year; data loss up to 1 hour is acceptable per week","Recovery starts within 4 hours; the most recent backup must be from within 1 hour","The payroll system processes transactions every 4 hours with 1-hour reconciliation windows"],
+    answer:0,
+    exp:`<strong>RTO (Recovery Time Objective)</strong> is the maximum acceptable time to restore a system after an outage — here, 4 hours. <strong>RPO (Recovery Point Objective)</strong> is the maximum acceptable data loss measured in time — here, 1 hour, meaning backups (or replication) must occur at least every hour so no more than 1 hour of transactions can be lost.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`An employee receives an email appearing to be from the CEO requesting an urgent wire transfer. No callback verification is performed and the transfer is completed. Which attack type BEST describes this?`,
+    opts:["Pretexting","Whaling / Business Email Compromise (BEC)","Spear phishing with malware delivery","Vishing"],
+    answer:1,
+    exp:`This is a classic <strong>Business Email Compromise (BEC)</strong> attack, specifically a type of <strong>whaling</strong> (targeting executives or their authority). Pretexting is the fabrication of a scenario (present here, but BEC is the more specific and accurate term). Spear phishing typically delivers malware. Vishing uses voice calls.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`Which privacy principle requires that personal data collected for one stated purpose not be used for other unrelated purposes?`,
+    opts:["Data minimization","Purpose limitation","Storage limitation","Accuracy"],
+    answer:1,
+    exp:`<strong>Purpose limitation</strong> (a core GDPR principle) requires that personal data be collected for specified, explicit, and legitimate purposes and not further processed in a manner incompatible with those purposes. Data minimization concerns collecting only necessary data. Storage limitation concerns retention periods. Accuracy ensures data is correct.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`A security team is told: "implement controls so that no single employee can both initiate AND approve a financial transaction." Which principle does this implement?`,
+    opts:["Least privilege","Need to know","Separation of duties","Job rotation"],
+    answer:2,
+    exp:`<strong>Separation of duties (SoD)</strong> ensures that critical tasks require more than one person, preventing fraud and error by dividing responsibilities. No single individual controls the entire process end-to-end. Least privilege limits access to only what is needed. Need-to-know limits information access. Job rotation is a compensating control for SoD but not the primary principle here.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`An organization discovers that its web server was modified to insert a cryptomining script into web pages served to visitors. Which CIA triad element was PRIMARILY compromised?`,
+    opts:["Confidentiality","Integrity","Availability","Authentication"],
+    answer:1,
+    exp:`The <strong>integrity</strong> of the web server and the content it serves was compromised — unauthorized modifications were made to legitimate files. While availability could be slightly impacted (resource usage), and confidentiality of visitor data could be affected, the primary compromise is integrity because the system's content was altered without authorization.`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`A DDoS attack floods a financial institution's online banking platform with traffic, making it inaccessible to customers for six hours. Which CIA triad component was ATTACKED?`,
+    opts:["Confidentiality","Integrity","Availability","Non-repudiation"],
+    answer:2,
+    exp:`A Distributed Denial of Service (DDoS) attack directly targets <strong>availability</strong> — the assurance that systems and services are accessible to authorized users when needed. No data was stolen (confidentiality) or modified (integrity).`
+  },
+  {
+    domain:"D1", domainLabel:"Security Principles",
+    q:`Under ISC2's ethical framework, a CC-certified professional discovers their employer is violating data privacy laws. What is the MOST appropriate first action?`,
+    opts:["Immediately report to regulators to protect the public","Report internally through appropriate channels first, then escalate externally if unresolved","Ignore it since employment obligations supersede professional ethics","Resign and report only after leaving the company"],
+    answer:1,
+    exp:`ISC2's Code of Ethics prioritizes protecting society but also requires acting lawfully and professionally. The appropriate path is to <strong>report internally first</strong> through proper channels (legal, compliance, management). External escalation to regulators is warranted if internal channels fail to address the issue, particularly when public safety or significant legal violations are involved.`
+  },
+
+  // ───────────────────── DOMAIN 2: BC / DR / IR ─────────────────────
+  {
+    domain:"D2", domainLabel:"BC / DR / IR",
+    q:`A ransomware attack encrypts all files on a hospital's primary systems. The incident response team is activated. In the CORRECT order of IR phases, what should happen IMMEDIATELY after containing the attack?`,
+    opts:["Recovery — restore systems from backup","Eradication — remove malware and close the attack vector","Lessons learned — document findings for the board","Notification — inform all patients of the breach"],
+    answer:1,
+    exp:`After <strong>Containment</strong> (isolating affected systems), the next phase is <strong>Eradication</strong> — removing the malware, closing the attack vector (e.g., patching the exploited vulnerability, removing compromised accounts). Only after eradication is it safe to begin <strong>Recovery</strong>. Restoring from backup while malware persists will re-infect clean systems.`
+  },
+  {
+    domain:"D2", domainLabel:"BC / DR / IR",
+    q:`A company's BCP specifies a hot site for critical operations. Which statement BEST describes a hot site?`,
+    opts:["A facility with power and HVAC but no hardware, requiring 48–72 hours to become operational","A fully operational duplicate facility with live data replication, capable of immediate failover","A facility with compatible hardware that must be configured and data restored before use","A mobile command center deployed to the disaster site"],
+    answer:1,
+    exp:`A <strong>hot site</strong> is a fully equipped, operational duplicate environment with current data (real-time or near-real-time replication) that can assume operations almost immediately (minutes to hours). A <strong>warm site</strong> has hardware but requires data restoration (hours to days). A <strong>cold site</strong> has space/power/HVAC but requires hardware procurement and full setup (days to weeks).`
+  },
+  {
+    domain:"D2", domainLabel:"BC / DR / IR",
+    q:`During a disaster, the primary data center floods. The organization fails over to its warm site. After 6 days, the primary site is restored. What process governs returning operations to the primary site?`,
+    opts:["Failover","Failback","Reconstitution","System recovery"],
+    answer:1,
+    exp:`<strong>Failback</strong> is the process of returning operations from the alternate/recovery site back to the primary site after it has been restored. <strong>Failover</strong> is the initial transition from primary to alternate. <strong>Reconstitution</strong> refers to rebuilding systems. Failback requires careful data synchronization to prevent data loss during the transition.`
+  },
+  {
+    domain:"D2", domainLabel:"BC / DR / IR",
+    q:`An incident responder discovers active exfiltration of data from a compromised server. The server is hosting a critical production application used by 10,000 customers. What is the MOST appropriate containment strategy?`,
+    opts:["Immediately shut down the server to stop exfiltration","Isolate the server from the internet while maintaining internal availability, and preserve forensic evidence","Do nothing until legal counsel approves the response","Migrate all customers to another server before taking any action"],
+    answer:1,
+    exp:`<strong>Network isolation</strong> (blocking external traffic while preserving internal access) balances stopping active harm against maintaining business continuity and preserving evidence. A full shutdown destroys volatile memory (RAM) containing forensic artifacts like running processes and network connections. Legal counsel may be informed in parallel but should not delay critical containment.`
+  },
+  {
+    domain:"D2", domainLabel:"BC / DR / IR",
+    q:`A BCP requires that a critical business function be recoverable within 2 hours with no more than 15 minutes of data loss. Which recovery architecture BEST meets these requirements?`,
+    opts:["Daily tape backups stored offsite","Hourly incremental backups to a warm site","Real-time synchronous replication to a hot site with automated failover","Weekly full backups with daily incrementals to a cold site"],
+    answer:2,
+    exp:`An RPO of 15 minutes requires data replication at least every 15 minutes — daily/hourly backups fail this. An RTO of 2 hours requires rapid failover. <strong>Real-time synchronous replication to a hot site with automated failover</strong> satisfies both: near-zero data loss (RPO ≈ seconds) and near-immediate failover (RTO ≈ minutes). A warm site with hourly backups would satisfy an RPO of 1 hour but not 15 minutes.`
+  },
+  {
+    domain:"D2", domainLabel:"BC / DR / IR",
+    q:`After a significant incident, the CISO wants to improve future response. Which activity is SPECIFICALLY designed to capture these improvements?`,
+    opts:["Tabletop exercise","After-Action Review / Lessons Learned","Risk assessment","Business Impact Analysis"],
+    answer:1,
+    exp:`The <strong>Post-Incident Activity (Lessons Learned / After-Action Review)</strong> phase is the final phase of incident response. It is specifically designed to document what happened, what worked, what failed, and what improvements should be made to policies, controls, and procedures. Tabletop exercises are proactive preparation, not post-incident activities.`
+  },
+  {
+    domain:"D2", domainLabel:"BC / DR / IR",
+    q:`An organization's IRP requires notifying the CISO within 1 hour of detecting a P1 incident. A system administrator detects an active breach at 2:00 AM but waits until 9:00 AM to notify the CISO to "avoid waking them." This delay causes additional data exfiltration. What risk does this scenario BEST illustrate?`,
+    opts:["Inadequate technical controls","Failure of administrative controls due to procedural non-compliance","Insufficient budget for 24/7 SOC coverage","An ineffective escalation matrix"],
+    answer:1,
+    exp:`The IRP (an <strong>administrative control</strong>) was in place but was not followed — this is <strong>procedural non-compliance</strong>. The administrator's discretion overrode a documented requirement, resulting in increased harm. This highlights that administrative controls fail when staff don't follow them, underscoring the need for training, culture, and accountability enforcement.`
+  },
+  {
+    domain:"D2", domainLabel:"BC / DR / IR",
+    q:`A Business Impact Analysis identifies that a logistics company's order management system has an MTD (Maximum Tolerable Downtime) of 8 hours. Their current RTO is 12 hours. What action is REQUIRED?`,
+    opts:["No action; RTO is a planning target, not a hard requirement","Reduce the RTO below 8 hours through improved recovery capabilities","Accept the gap as residual risk","Increase the MTD to 12 hours in the BIA documentation"],
+    answer:1,
+    exp:`<strong>MTD</strong> is the maximum time a business function can be unavailable before causing unacceptable consequences. The RTO <em>must</em> be less than the MTD. A 12-hour RTO against an 8-hour MTD means the organization will exceed acceptable downtime. Recovery capabilities must be improved to achieve an RTO ≤ 8 hours. You cannot safely "accept" an MTD breach as residual risk.`
+  },
+  {
+    domain:"D2", domainLabel:"BC / DR / IR",
+    q:`During incident response, a first responder runs a full antivirus scan on a compromised live Windows system before capturing a memory image. What critical evidence was LIKELY destroyed?`,
+    opts:["Disk-based log files","Volatile memory contents including active processes, network connections, and encryption keys","Registry hives stored on disk","Event logs in the Windows Event Viewer"],
+    answer:1,
+    exp:`Running a scan or any process modifies the <strong>volatile memory</strong> (RAM), potentially overwriting or altering in-memory artifacts: running processes, network socket states, decrypted encryption keys, injected shellcode, and user credentials. Proper DFIR order: document running state → capture memory (RAM) → capture disk image → THEN run analysis tools on copies. Disk-based artifacts (logs, registry, event logs) are non-volatile and survive a scan.`
+  },
+  {
+    domain:"D2", domainLabel:"BC / DR / IR",
+    q:`A CSIRT policy states that ransomware incidents must be reported to law enforcement "as soon as practicable." The legal team argues this should be "within 72 hours." Which regulatory framework most likely mandates the 72-hour notification window (for data breaches involving personal data)?`,
+    opts:["NIST SP 800-61","GDPR Article 33","ISO/IEC 27035","HIPAA Breach Notification Rule"],
+    answer:1,
+    exp:`<strong>GDPR Article 33</strong> requires that personal data breaches be notified to the supervisory authority within <strong>72 hours</strong> of becoming aware of the breach. HIPAA requires notification within 60 days of discovery. NIST SP 800-61 and ISO 27035 are frameworks/standards, not regulations with specific mandatory timeframes.`
+  },
+
+  // ───────────────────── DOMAIN 3: Access Control ─────────────────────
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`A hospital implements a system where doctors can access all patient records in their department but not records from other departments, and the access level cannot be changed by the doctor themselves — only by the system administrator. Which access control model BEST describes this?`,
+    opts:["Discretionary Access Control (DAC)","Mandatory Access Control (MAC)","Role-Based Access Control (RBAC)","Attribute-Based Access Control (ABAC)"],
+    answer:2,
+    exp:`<strong>RBAC</strong> assigns permissions based on job roles (doctor → department role). Doctors can access records within their assigned department role but cannot modify their own permissions (that is an administrator function). DAC allows resource owners to grant/revoke their own access. MAC uses labels (top secret, secret). ABAC uses multiple attributes dynamically. The departmental role structure with admin-controlled permissions is classic RBAC.`
+  },
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`A government system uses Bell-LaPadula model. A user with SECRET clearance attempts to write a document to a CONFIDENTIAL partition. Under Bell-LaPadula, what happens?`,
+    opts:["The write is permitted — users can write to lower levels","The write is denied — this violates the *-property (star property: no write down)","The write is permitted with an audit log entry","The write requires explicit approval from a system admin"],
+    answer:1,
+    exp:`Bell-LaPadula enforces confidentiality with two rules: <strong>Simple Security Property</strong> (no read up — can't read above your clearance) and <strong>*-property / Star Property</strong> (no write down — can't write to a lower classification). Writing SECRET data to a CONFIDENTIAL partition would allow lower-cleared users to read it, creating a downgrade vulnerability. This write is <strong>denied</strong>.`
+  },
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`An attacker compromises an employee's ID badge and enters a server room. A second employee holds the door open for a person they don't recognize, allowing them to enter without re-authenticating. What physical security vulnerability does this represent?`,
+    opts:["Shoulder surfing","Piggybacking / tailgating","Masquerading","Spoofing"],
+    answer:1,
+    exp:`<strong>Tailgating (piggybacking)</strong> is when an unauthorized person follows an authorized person through a secured door without authenticating. The well-intentioned employee holding the door enables this attack. A mantrap (two-door access controlled vestibule) is the primary physical countermeasure. Masquerading/spoofing involves impersonation of an identity, not physical following.`
+  },
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`In Biba integrity model, a user at HIGH integrity level tries to read data from a LOW integrity level source. What does the Biba model enforce?`,
+    opts:["Allow read; integrity models only restrict writes","Deny read — the Simple Integrity Property prevents reading data of lower integrity (no read down)","Allow read with a warning log","Deny read only if the user explicitly requests modification of the data"],
+    answer:1,
+    exp:`The <strong>Biba model</strong> protects data integrity (opposite of Bell-LaPadula). Its <strong>Simple Integrity Property</strong> states: no read down — a subject cannot read data at a lower integrity level (to prevent contamination from untrusted sources). The <strong>*-Integrity Property</strong> states: no write up — a subject cannot write to a higher integrity level. A HIGH integrity user reading LOW integrity data risks integrity corruption.`
+  },
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`A company uses smart card authentication for physical access. An attacker steals a card and attempts access. The BEST additional control to defeat this attack without adding friction for legitimate users is:`,
+    opts:["PIN pad (something you know) — adds a factor","Facial recognition camera at the entry point","A security guard who verifies identity for every entry","Requiring re-authentication every 15 minutes"],
+    answer:0,
+    exp:`Adding a <strong>PIN</strong> (something you know) to the smart card (something you have) creates <strong>two-factor authentication (2FA)</strong>. An attacker with only the card cannot complete authentication without the PIN. Facial recognition (biometric) would also work but is more expensive and can have accuracy issues. A security guard is a compensating control but adds friction and cost. The PIN specifically defeats the "card stolen" attack with minimal user friction.`
+  },
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`An employee transfers from the Finance department to HR. The IAM system automatically adds all HR access rights but does not remove Finance rights. After six months, a security audit discovers this. What security principle was VIOLATED and what is this problem called?`,
+    opts:["Least privilege; the issue is access creep / privilege creep","Need-to-know; the issue is over-provisioning","Separation of duties; the issue is conflicting roles","Non-repudiation; the issue is inadequate logging"],
+    answer:0,
+    exp:`<strong>Privilege creep (access creep)</strong> occurs when users accumulate access rights over time — through role changes, projects, etc. — that are never revoked. This violates the principle of <strong>least privilege</strong> (users should have only the access required for their current role). Periodic access reviews (recertification campaigns) are the standard remediation.`
+  },
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`A cloud platform grants access based on: user department, device compliance status, geographic location, and time of day. Which access control model is this?`,
+    opts:["RBAC","DAC","MAC","ABAC"],
+    answer:3,
+    exp:`<strong>ABAC (Attribute-Based Access Control)</strong> makes dynamic access decisions based on multiple attributes of the subject (user department), object, environment (time of day, location), and system (device compliance). This is more flexible and granular than RBAC (which uses static role assignments) and is the model used in Zero Trust architectures.`
+  },
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`A penetration tester gains access to an internal system and discovers they can read /etc/shadow on a Linux server despite being a non-root user. What access control failure does this represent?`,
+    opts:["DAC failure — the file owner granted read permissions incorrectly","Misconfigured file permissions — /etc/shadow should be readable only by root/shadow group","Mandatory Access Control bypass","Authentication control failure"],
+    answer:1,
+    exp:`<strong>/etc/shadow</strong> stores hashed passwords and should be readable ONLY by root (or the shadow group) — permissions should be 640 or 000. If a non-root user can read it, file permissions are misconfigured. This is a <strong>discretionary/system access control failure</strong> at the filesystem level, enabling offline password cracking attacks against the extracted hashes.`
+  },
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`A security policy requires that all privileged administrative sessions must be recorded and stored for 90 days. An admin connects via SSH using shared credentials. What TWO problems does this create?`,
+    opts:["Prevents session recording; violates non-repudiation","Shared credentials prevent individual accountability (violates non-repudiation) and make it impossible to attribute recorded actions to a specific person","Allows privilege escalation; violates least privilege","Creates audit log bloat; violates data minimization"],
+    answer:1,
+    exp:`<strong>Shared credentials</strong> destroy <strong>individual accountability and non-repudiation</strong> — if multiple admins use the same account, you cannot definitively attribute any recorded action to a specific individual. Even with session recording, the logs show what "root" did, not WHO did it. PAM (Privileged Access Management) solutions with individual named accounts and session recording solve this.`
+  },
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`A defense contractor implements a system where file access decisions are based exclusively on classification labels (TOP SECRET, SECRET, CONFIDENTIAL) applied to both users and data, with no user override capability. Which model does this MOST closely represent?`,
+    opts:["DAC — because labels are still a form of discretionary tagging","MAC — because the system enforces access based on labels and policies without user override","RBAC — because roles map to classification levels","ABAC — because classification is an attribute"],
+    answer:1,
+    exp:`<strong>Mandatory Access Control (MAC)</strong> is defined by the system enforcing access based on <em>security labels</em>, with no ability for users to override or delegate access. The operating system makes all decisions based on label comparisons. DAC allows owners to set permissions. RBAC uses roles. This label-based, non-overridable system is MAC — typical in military/government systems (e.g., SELinux).`
+  },
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`An attacker sends forged RFID signals to unlock a door without a physical card. What type of attack is this?`,
+    opts:["Relay attack","Replay attack","Cloning attack","Jamming attack"],
+    answer:1,
+    exp:`A <strong>replay attack</strong> captures a legitimate RFID authentication signal and replays it to gain access. A <strong>relay attack</strong> extends the range of RFID communication to trick a reader into authenticating. <strong>Cloning</strong> duplicates the card credential. <strong>Jamming</strong> disrupts signals. The scenario of sending forged/replayed signals without a physical card most closely describes a replay attack.`
+  },
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`A company wants to allow vendors temporary access to a specific network segment for 48 hours to perform maintenance. Which access control approach is MOST appropriate?`,
+    opts:["Create permanent vendor accounts with restricted permissions","Issue time-limited credentials with least-privilege access to only the required segment, expiring automatically after 48 hours","Add vendors to an existing employee group with similar access needs","Use shared credentials for all vendor access"],
+    answer:1,
+    exp:`<strong>Just-in-time (JIT) privileged access</strong> with automatic expiration applies <strong>least privilege</strong> and <strong>temporal access control</strong>: vendors get exactly what they need for exactly as long as they need it. Permanent accounts create lingering attack surface. Shared credentials destroy accountability. Piggyback on employee groups violates least privilege and need-to-know.`
+  },
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`Which biometric characteristic has the HIGHEST uniqueness and is LEAST likely to change over a person's lifetime?`,
+    opts:["Voice pattern","Fingerprint","Iris pattern","Facial geometry"],
+    answer:2,
+    exp:`The <strong>iris pattern</strong> is formed during fetal development and remains stable throughout life, is highly unique (even between identical twins), and is extremely resistant to forgery. Fingerprints can be altered (scarring, burns, aging). Voice patterns change with illness, age, emotion. Facial geometry changes with age, weight, injury.`
+  },
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`A biometric system has an FAR of 0.01% and an FRR of 3%. For a high-security nuclear facility, which adjustment is MOST appropriate?`,
+    opts:["Raise the sensitivity threshold to decrease FAR, accepting a higher FRR","Lower the sensitivity threshold to decrease FRR, accepting a higher FAR","Keep current settings as the FAR is already very low","Replace the biometric system with a PIN-only system"],
+    answer:0,
+    exp:`For a <strong>high-security environment</strong>, <strong>preventing unauthorized access (FAR)</strong> is the top priority. Raising the sensitivity threshold makes the system more strict: <strong>FAR decreases</strong> (fewer unauthorized people accepted) at the cost of <strong>FRR increasing</strong> (more legitimate users rejected and must re-authenticate). An FAR of 0.01% may still be too high for nuclear access — even one unauthorized entry is catastrophic.`
+  },
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`An employee's account shows login activity from two countries simultaneously (Chicago and Tokyo, 6 minutes apart). This is detected by the SIEM. What is this detection technique called?`,
+    opts:["Anomaly-based detection","Signature-based detection","Impossible travel detection / geo-velocity analysis","Heuristic scanning"],
+    answer:2,
+    exp:`<strong>Impossible travel detection (geo-velocity analysis)</strong> flags authentication events that could not physically occur given travel constraints — logging in from Chicago and Tokyo within minutes is physically impossible. This is an identity threat detection technique used by CASB, IAM platforms, and modern SIEMs to detect credential compromise or account sharing.`
+  },
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`What is the PRIMARY difference between identification and authentication?`,
+    opts:["Identification uses passwords; authentication uses biometrics","Identification is the claim of an identity; authentication is the proof of that claim","Identification is performed by the system; authentication is performed by the user","Authentication comes before identification in the access control process"],
+    answer:1,
+    exp:`<strong>Identification</strong> is the act of claiming an identity (e.g., entering a username: "I am user X"). <strong>Authentication</strong> is providing proof of that claim (e.g., entering a password, presenting a token: "Here is evidence that I am indeed user X"). The process is always: Identify → Authenticate → Authorize.`
+  },
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`A zero-trust architecture (ZTA) assumes which foundational stance?`,
+    opts:["Internal network traffic is trusted by default; only external traffic requires verification","No user, device, or network location is inherently trusted — all access requires continuous verification","Physical access controls eliminate the need for network-based authentication","Once authenticated, a user's session remains trusted for 8 hours"],
+    answer:1,
+    exp:`<strong>Zero Trust</strong> operates on "never trust, always verify." Unlike traditional perimeter-based security (trust inside the network), ZTA assumes breach and requires continuous verification of every user, device, and request regardless of network location. The core principles are: verify explicitly, use least privilege, assume breach.`
+  },
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`A system implements "need to know" in addition to clearance levels. A user with TOP SECRET clearance requests access to a TOP SECRET project document they are not assigned to. What happens?`,
+    opts:["Access is granted — clearance level is sufficient","Access is denied — need-to-know is a SEPARATE requirement from clearance level","Access is granted with an audit log entry","The request is escalated to the data owner"],
+    answer:1,
+    exp:`<strong>Need-to-know</strong> and <strong>security clearance</strong> are independent requirements that BOTH must be satisfied. Clearance defines the maximum classification you CAN access; need-to-know determines which specific information at that level you SHOULD access based on your duties. Having TOP SECRET clearance does not grant access to ALL TOP SECRET information — only that which is relevant to your specific role.`
+  },
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`After a major system upgrade, an administrator reviews the permissions on a critical database and finds accounts from employees who left the company 2 years ago still have read/write access. This is BEST remediated by:`,
+    opts:["Resetting passwords on the orphaned accounts","Implementing periodic access reviews (recertification) and automated deprovisioning tied to HR offboarding","Applying encryption to the database","Enabling full database audit logging"],
+    answer:1,
+    exp:`<strong>Orphaned accounts</strong> (accounts of former employees that remain active) are a critical access control failure. The remedy is two-pronged: <strong>automated deprovisioning</strong> integrated with HR systems to disable/delete accounts immediately upon offboarding, and <strong>periodic access recertification</strong> to catch any accounts missed during offboarding. Password resets and encryption don't address the underlying access control problem.`
+  },
+  {
+    domain:"D3", domainLabel:"Access Control Concepts",
+    q:`Which type of authentication is MOST resilient against credential stuffing attacks?`,
+    opts:["Strong password requirements (16+ characters, complexity)","Unique passwords per site stored in a password manager","Phishing-resistant MFA (FIDO2/WebAuthn)","Regular forced password changes every 90 days"],
+    answer:2,
+    exp:`<strong>Credential stuffing</strong> uses breached username/password pairs from one site against others. <strong>Phishing-resistant MFA</strong> defeats this because even with correct credentials, the attacker lacks the second factor (hardware key bound to the origin). Unique passwords reduce cross-site stuffing but still allow attacks on the specific breached site. Frequent password changes are ineffective against stuffing. FIDO2 is the strongest control.`
+  },
+
+  // ───────────────────── DOMAIN 4: Network Security ─────────────────────
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`A packet is captured with source IP 10.0.0.5 attempting to communicate with destination IP 8.8.8.8 on port 53. The firewall has a rule: "DENY outbound UDP port 53 from internal hosts; ALLOW outbound TCP port 443." What will the firewall do with this packet?`,
+    opts:["Allow it — DNS over port 53 is standard","Deny it — UDP port 53 outbound is explicitly denied","Drop it silently if implicit deny is configured","Forward it to the DMZ for inspection"],
+    answer:1,
+    exp:`The firewall has an explicit <strong>DENY rule for outbound UDP port 53</strong> (standard DNS). The packet from 10.0.0.5 to 8.8.8.8:53/UDP matches this rule and will be <strong>denied</strong>. This is a common control to force DNS through internal resolvers (preventing DNS tunneling and data exfiltration). Note: DNS over TCP also exists but port 443 (HTTPS) does not apply here.`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`A security analyst reviews IDS alerts and finds 50 alerts per day, of which only 3 are actual attacks. The remaining 47 are legitimate traffic flagged as malicious. What term describes the 47 false alerts?`,
+    opts:["False negatives","True negatives","False positives","True positives"],
+    answer:2,
+    exp:`<strong>False positives</strong> are legitimate events incorrectly flagged as malicious by the IDS. High false positive rates cause "alert fatigue," reducing analyst effectiveness. <strong>False negatives</strong> are actual attacks NOT detected by the IDS (missed detections). True positives are real attacks correctly identified. True negatives are legitimate traffic correctly passed.`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`An attacker intercepts communication between a client and server, decrypts and re-encrypts traffic using their own certificates, then forwards it to the legitimate server. Neither party is aware. What attack is this?`,
+    opts:["Replay attack","Man-in-the-Middle (MITM) / SSL stripping","Eavesdropping (passive)","Session hijacking"],
+    answer:1,
+    exp:`This is a <strong>Man-in-the-Middle (MITM)</strong> attack, specifically an active interception where the attacker acts as a proxy — establishing separate encrypted sessions with both parties, decrypting traffic, and re-encrypting it. This is also related to <strong>SSL inspection</strong> (used legitimately in corporate proxies) but maliciously is MITM. Certificate pinning and HSTS help defend against this.`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`What is the PRIMARY security advantage of a network IPS over a network IDS?`,
+    opts:["IPS generates more detailed logs than IDS","IPS can actively block/drop malicious traffic inline; IDS only detects and alerts","IPS uses machine learning; IDS uses signatures only","IPS is deployed out-of-band; IDS is inline"],
+    answer:1,
+    exp:`An <strong>IDS (Intrusion Detection System)</strong> is passive — it monitors traffic and generates alerts but cannot block traffic. An <strong>IPS (Intrusion Prevention System)</strong> is deployed <strong>inline</strong> and can <strong>actively drop, block, or modify</strong> malicious packets in real-time. The tradeoff: IPS can also block legitimate traffic (false positives) affecting availability, while IDS is safe-to-fail.`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`An organization deploys a honeypot on its internal network. An attacker who has already breached the perimeter triggers the honeypot. What is the PRIMARY purpose this serves?`,
+    opts:["It patches the vulnerability used by the attacker","It deters the attacker from continuing","It detects lateral movement and provides threat intelligence about attacker TTPs","It automatically isolates the attacker's system"],
+    answer:2,
+    exp:`A <strong>honeypot</strong> is a deception technology — a fake, intentionally vulnerable system with no legitimate business use. Any interaction with it is suspicious by definition. It detects <strong>lateral movement</strong> by internal threats or post-breach attackers, and captures attacker <strong>TTPs (Tactics, Techniques, and Procedures)</strong> for threat intelligence. It does not patch, automatically isolate, or technically deter a determined attacker.`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`A network engineer recommends placing web servers in a DMZ. What is the SECURITY rationale for this architecture?`,
+    opts:["DMZ servers have stronger encryption than internal servers","The DMZ isolates publicly accessible servers so that a compromise does not directly expose the internal network","DMZ servers do not need to be patched as frequently","DMZ placement improves web server performance through load balancing"],
+    answer:1,
+    exp:`A <strong>DMZ (Demilitarized Zone)</strong> is a network segment between the internet and the internal network, typically protected by two firewalls. Public-facing servers (web, mail, DNS) are placed here so that if compromised, the attacker faces additional firewall controls before reaching the sensitive internal network. The internal network remains protected even during a DMZ compromise.`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`An attacker sends a TCP SYN packet to a target host. The host responds with SYN-ACK. The attacker sends another SYN packet without completing the handshake. After thousands of iterations, the target's connection table is exhausted. What attack is this?`,
+    opts:["TCP session hijacking","SYN flood attack (volumetric DDoS)","Port scan","Land attack"],
+    answer:1,
+    exp:`A <strong>SYN flood attack</strong> exploits the TCP three-way handshake by sending a high volume of SYN packets without completing the handshake (no final ACK). The target allocates resources for each half-open connection, exhausting its connection table (backlog queue) until it can no longer accept legitimate connections. SYN cookies and rate limiting are primary defenses.`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`Which protocol provides network device authentication and encrypts the entire management session including the username, password, and all commands?`,
+    opts:["Telnet","SNMPv2c","SSH (Secure Shell)","HTTP with Basic Auth"],
+    answer:2,
+    exp:`<strong>SSH (Secure Shell)</strong> provides strong authentication and encrypts the entire session — credentials, commands, output. Telnet transmits everything in cleartext. SNMPv2c uses community strings in cleartext (SNMPv3 adds authentication and encryption). HTTP Basic Auth sends base64-encoded credentials (not encrypted without HTTPS).`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`A security team wants to prevent internal users from accessing malicious websites and block command-and-control (C2) callbacks from malware. Which technology is MOST directly suited to this purpose?`,
+    opts:["Network-based IPS","DNS sinkholing / DNS filtering","Web Application Firewall (WAF)","Network Access Control (NAC)"],
+    answer:1,
+    exp:`<strong>DNS sinkholing / DNS filtering</strong> intercepts DNS queries for known malicious domains and returns a non-routable address (or a sinkhole IP), blocking both user browsing to malicious sites AND malware C2 callbacks that rely on DNS resolution. An IPS can block known signatures but struggles with encrypted C2. WAF protects web applications from attacks, not outbound traffic. NAC controls device admission.`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`TLS 1.3 eliminates the "handshake" messages that exposed which critical security information in older TLS versions?`,
+    opts:["Server certificate chain","Cipher suite negotiation in plaintext revealing supported algorithms","Client IP address","Session cookie values"],
+    answer:1,
+    exp:`In TLS 1.2 and earlier, the <strong>cipher suite negotiation</strong> occurred in plaintext, allowing passive observers to identify supported algorithms and potentially downgrade to weaker ciphers. TLS 1.3 encrypts more of the handshake earlier, removes support for weak cipher suites entirely, and eliminates features like RSA key exchange and renegotiation. It also removes deprecated algorithms (RC4, DES, SHA-1, MD5).`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`An attacker compromises a public Wi-Fi network and broadcasts a stronger signal with the same SSID as the legitimate network. Users' devices automatically connect. What attack is this?`,
+    opts:["Deauthentication attack","Evil twin / rogue access point attack","Wardriving","Bluesnarfing"],
+    answer:1,
+    exp:`An <strong>evil twin</strong> (rogue access point) attack creates a fraudulent Wi-Fi network with the same SSID as a legitimate network. Since Wi-Fi clients typically connect to the strongest signal, users connect to the attacker's AP and their traffic can be intercepted. VPNs and certificate-based authentication for Wi-Fi (WPA2-Enterprise with EAP-TLS) are key defenses.`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`A network scan reveals port 22 is open on all servers, but port 3389 is open on only the domain controllers. An attacker who gains access to a non-DC server wants to move laterally to a domain controller. Which port/protocol would they MOST likely target for this lateral movement?`,
+    opts:["Port 22/SSH to pivot through the non-DC server to RDP port 3389 on DCs","Port 80/HTTP to leverage a web application vulnerability","Port 53/DNS to use DNS zone transfer","Port 25/SMTP to send phishing emails internally"],
+    answer:0,
+    exp:`With SSH (port 22) access to an intermediate server, the attacker can use <strong>SSH tunneling / port forwarding</strong> to proxy a connection to <strong>RDP (port 3389)</strong> on the domain controllers — which appear to accept RDP only from internal hosts. This is a classic lateral movement technique: use an already-compromised host as a pivot point to reach restricted segments. Segmenting RDP access at the firewall AND requiring jump hosts with PAM controls mitigate this.`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`What does "ingress filtering" on a router prevent?`,
+    opts:["Internal users from accessing the internet","External packets with spoofed source IP addresses claiming to originate from the internal network","Outbound DDoS traffic from internal infected hosts","Unauthorized VLAN hopping attacks"],
+    answer:1,
+    exp:`<strong>Ingress filtering</strong> (BCP38) drops incoming packets at the network boundary whose source IP addresses are impossible given the packet's direction — e.g., a packet arriving from the internet claiming to have a source IP of an internal address (192.168.x.x, 10.x.x.x). This prevents IP spoofing used in DDoS amplification attacks and source address forgery. <strong>Egress filtering</strong> prevents outbound spoofed packets.`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`An organization uses VLAN segmentation to separate HR, Finance, and Engineering networks. A penetration tester exploits a misconfigured trunk port to access VLANs they should not. What technique was used?`,
+    opts:["ARP poisoning","VLAN hopping via double tagging or switch spoofing","MAC flooding","DHCP starvation"],
+    answer:1,
+    exp:`<strong>VLAN hopping</strong> exploits misconfigurations in trunk port negotiation (DTP — Dynamic Trunking Protocol) or uses double-tagged 802.1Q frames to traverse VLAN boundaries. Mitigations: disable DTP on access ports, use dedicated native VLANs, disable unused trunk ports, and explicitly configure all ports as access or trunk (not auto/desirable).`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`Which network segmentation approach uses software to dynamically create isolated network segments for individual workloads or applications without requiring physical hardware changes?`,
+    opts:["Traditional VLAN segmentation","Physical air-gapping","Micro-segmentation (Software-Defined Networking)","DMZ architecture"],
+    answer:2,
+    exp:`<strong>Micro-segmentation</strong> (implemented via SDN, NSX, or cloud security groups) creates granular, policy-based isolation between individual workloads — even within the same VLAN or subnet. Unlike VLANs (which segment at network layer), micro-segmentation can enforce east-west traffic policies between specific applications, reducing blast radius of a compromise. This is a core Zero Trust network control.`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`A threat actor sends a specially crafted BGP UPDATE message to an ISP's router, redirecting all traffic for a major bank's IP prefixes through attacker-controlled infrastructure. What attack is this?`,
+    opts:["DNS cache poisoning","BGP hijacking","Route injection","IP spoofing"],
+    answer:1,
+    exp:`<strong>BGP hijacking</strong> (Border Gateway Protocol hijacking) occurs when a malicious or misconfigured AS announces more specific routes for IP prefixes it does not legitimately own, causing internet routers to forward traffic through the attacker's infrastructure. RPKI (Resource Public Key Infrastructure) is the primary cryptographic defense against BGP hijacking.`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`A WAF is deployed in front of a web application. Which attack would a WAF MOST effectively block that a traditional network firewall would NOT?`,
+    opts:["SYN flood DDoS attack","SQL injection in an HTTP POST body parameter","Unauthorized port scanning","TLS certificate spoofing"],
+    answer:1,
+    exp:`A traditional firewall operates at L3/L4 (IP/TCP) and cannot inspect application-layer content. A <strong>WAF (Web Application Firewall)</strong> operates at L7 and inspects HTTP request content — including POST body parameters, headers, and URL parameters — detecting and blocking <strong>SQL injection, XSS, CSRF, command injection</strong>, and other OWASP Top 10 attacks that a standard firewall cannot see.`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`An analyst observes beaconing behavior: a workstation sending small HTTPS requests to the same external IP every 3 minutes, 24/7. The traffic is encrypted and passes firewall rules. What is the MOST likely explanation?`,
+    opts:["Normal browser update check behavior","C2 (Command and Control) beaconing from malware maintaining persistence","A misconfigured NTP client","Scheduled backup software communicating with cloud storage"],
+    answer:1,
+    exp:`Regular, consistent, periodic outbound connections to a single external IP on a non-standard schedule (especially at fixed intervals) are a classic indicator of <strong>C2 (Command and Control) beaconing</strong>. Malware maintains connectivity to its C2 server at fixed intervals to receive commands. The encrypted nature (HTTPS) is by design — modern C2 uses HTTPS to blend in with legitimate traffic. JA3/JA3S fingerprinting and TLS certificate analysis can help detect this.`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`An organization wants to protect sensitive internal traffic from eavesdropping as it traverses a shared internal network segment. Which protocol is MOST appropriate?`,
+    opts:["IPsec in Transport mode","IPsec in Tunnel mode","SSL/TLS","Both IPsec Transport mode and TLS are appropriate depending on use case"],
+    answer:3,
+    exp:`Both are valid: <strong>IPsec Transport mode</strong> encrypts only the payload of IP packets (not the header) — appropriate for host-to-host encryption on the same network. <strong>TLS</strong> encrypts application-layer data between applications. For network-level protection of all traffic between specific hosts, IPsec Transport mode is more appropriate. For application-specific protection (web, email), TLS is standard. The question tests understanding that both serve the purpose depending on context.`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`A stateful firewall tracks the state of network connections. What is the key SECURITY advantage over a stateless (packet-filtering) firewall?`,
+    opts:["Stateful firewalls are faster at processing packets","Stateful firewalls track connection context and can identify out-of-state packets that bypass simple rules","Stateful firewalls inspect application-layer content","Stateful firewalls prevent DDoS attacks by rate limiting"],
+    answer:1,
+    exp:`A <strong>stateful firewall</strong> maintains a connection state table and tracks the context of each session (SYN, SYN-ACK, ESTABLISHED, FIN). It can detect <strong>out-of-state packets</strong> — e.g., an ACK packet without a preceding SYN, which a stateless filter would pass (matching a rule allowing established traffic). This prevents TCP session injection and some spoofing attacks. Stateless firewalls inspect each packet in isolation with no connection context.`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`An attacker sends spoofed ARP reply packets mapping the gateway's IP address to the attacker's MAC address. What attack is this and what is the PRIMARY impact?`,
+    opts:["MAC flooding — overwhelms CAM table causing broadcast traffic","ARP cache poisoning — intercepts all traffic intended for the gateway","DHCP starvation — exhausts IP address pool","DNS spoofing — redirects DNS queries"],
+    answer:1,
+    exp:`<strong>ARP Cache Poisoning</strong> overwrites the ARP cache of victims with false MAC-to-IP mappings, redirecting traffic intended for the gateway to the attacker's machine — enabling <strong>MITM attacks, sniffing, and traffic modification</strong>. Defenses include Dynamic ARP Inspection (DAI) on switches, static ARP entries for critical hosts, and using encrypted protocols (TLS) so intercepted traffic is still protected.`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`Which statement BEST explains why organizations implement network access control (NAC)?`,
+    opts:["NAC encrypts all network traffic between endpoints","NAC ensures only compliant, authenticated devices are permitted to connect to the network","NAC prevents SQL injection attacks on internal databases","NAC replaces the need for endpoint antivirus software"],
+    answer:1,
+    exp:`<strong>NAC (Network Access Control)</strong> enforces security policy on devices attempting to join the network — checking authentication (is this a known/managed device?), compliance (is the OS patched? Is antivirus current?), and authorization (which network segment should this device access?). Non-compliant devices are quarantined or denied. NAC does not encrypt traffic, prevent application-layer attacks, or replace endpoint security.`
+  },
+  {
+    domain:"D4", domainLabel:"Network Security",
+    q:`A security engineer recommends disabling ICMP echo requests at the perimeter firewall. An operations engineer argues this will break network troubleshooting. Which SECURITY rationale supports the security engineer's recommendation?`,
+    opts:["ICMP carries malware payloads in all variants","ICMP echo responses reveal host existence (network mapping) and can be used in ICMP flood/smurf attacks","ICMP is an unencrypted protocol that exposes all network traffic","ICMP cannot traverse firewalls by design"],
+    answer:1,
+    exp:`Allowing inbound ICMP echo requests from the internet enables attackers to <strong>map live hosts</strong> (ping sweep) and can enable <strong>ICMP flood (ping flood)</strong> or <strong>Smurf attacks</strong> (amplified DDoS via broadcast). Blocking inbound ICMP echo reduces reconnaissance capability and attack surface. Outbound ICMP (from internal to external) and ICMP unreachable/TTL-exceeded may still be permitted for troubleshooting. This is a classic availability vs. security tradeoff.`
+  },
+
+  // ───────────────────── DOMAIN 5: Security Operations ─────────────────────
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`A security analyst uses a SIEM to correlate events. The SIEM generates an alert when a user account logs in from a new country immediately after a failed login attempt from the usual location. What type of SIEM rule is this?`,
+    opts:["Threshold rule","Trend analysis rule","Correlation rule","Pattern matching / signature rule"],
+    answer:2,
+    exp:`A <strong>correlation rule</strong> combines multiple, related security events across different log sources to identify a pattern that indicates a potential threat — in this case, correlating geolocation data from two separate authentication events. This is more sophisticated than a simple threshold (single metric) or signature (known attack string match) rule.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`An administrator applies a vendor patch to a critical production server without testing it in a staging environment first. The patch breaks the application, causing a 4-hour outage. Which change management control FAILED?`,
+    opts:["Patch approval from the CISO was not obtained","The patch was not tested in a pre-production environment before deployment","A rollback plan was not documented","Both B and C — testing and rollback planning are both required change management steps"],
+    answer:3,
+    exp:`Proper <strong>change management</strong> requires: (1) <strong>testing</strong> in a non-production environment before applying to production, and (2) a documented <strong>rollback plan</strong> to recover if the change causes issues. Both failures contributed to the 4-hour outage. CISO approval may be required for major changes but is less directly the cause of this specific failure.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`A forensic investigator discovers that timestamps on key log files have been modified. What type of anti-forensic technique is this?`,
+    opts:["Steganography","Log tampering / timestomping","Data wiping","Encryption of evidence"],
+    answer:1,
+    exp:`<strong>Timestomping</strong> is the modification of file metadata timestamps (created, modified, accessed) to obscure the timeline of malicious activity — a common anti-forensic technique used by sophisticated attackers. <strong>Log tampering</strong> is the broader category of manipulating, deleting, or modifying log files to conceal attacker activity. Forensic integrity controls (cryptographic hashing of logs, write-once storage, centralized SIEM) mitigate this.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`Which hashing property ensures that even a tiny change to a file (adding a single space) produces a completely different hash value?`,
+    opts:["Collision resistance","Preimage resistance","The avalanche effect","Determinism"],
+    answer:2,
+    exp:`The <strong>avalanche effect</strong> is the property of cryptographic hash functions where a small change to the input (even one bit) causes a drastically different output hash value. This is essential for file integrity verification — a tampered file will produce a completely different hash, immediately detectable when compared against a stored baseline hash.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`A company processes customer credit card data. A PCI DSS assessment finds that the organization stores full Primary Account Numbers (PANs) in plaintext in a database. The assessor also notes that CVV codes are stored post-authorization. What is the SEVERITY of storing CVV codes post-authorization under PCI DSS?`,
+    opts:["Minor finding — CVVs should be encrypted at rest","Critical/prohibited — PCI DSS explicitly prohibits storing CVV codes after authorization under any circumstances","Acceptable if the database is encrypted","Acceptable if access is restricted to authorized personnel only"],
+    answer:1,
+    exp:`PCI DSS <strong>explicitly and absolutely prohibits</strong> storing CVV codes (card verification values — the 3-4 digit security code) after authorization, regardless of encryption, access controls, or any other mitigating factor. This is non-negotiable. PANs may be stored if protected, but CVV/CVC/CID data must NEVER be retained post-authorization. This finding would result in immediate non-compliance.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`A penetration tester executes a command on a target Linux server: `+"`find / -perm -4000 -type f 2>/dev/null`"+`. What is the tester looking for?`,
+    opts:["World-writable directories","Files with the SUID bit set (potential privilege escalation vectors)","Files modified in the last 24 hours","Hidden files and directories"],
+    answer:1,
+    exp:`<code>-perm -4000</code> finds files with the <strong>SUID (Set User ID) bit</strong> set. When executed, SUID binaries run with the permissions of the <em>file owner</em> (often root) rather than the executing user. Misconfigured SUID binaries (e.g., a custom script with SUID set) are classic <strong>local privilege escalation</strong> vectors. GTFOBins documents SUID abuse techniques for common binaries.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`During an incident investigation, an analyst needs to determine the ORDER in which evidence from a compromised Windows workstation should be collected. Which order correctly applies the principle of volatility?`,
+    opts:["Disk image → RAM → Running processes → Network connections","Running processes → Network connections → RAM → Disk image","RAM → Running processes → Network connections → Disk image","Network connections → RAM → Running processes → Disk image"],
+    answer:0,
+    exp:`The principle of evidence collection is to acquire <strong>most volatile to least volatile</strong>: (1) CPU registers/cache (ephemeral, often not captured separately) → (2) RAM (volatile, lost on shutdown) → (3) Running processes and network connections (captured from RAM/OS) → (4) Disk image (persistent, survives shutdown). Option A is backwards — but note the correct sequence should be: RAM first, then processes/network (from RAM), then disk. The closest correct answer prioritizes RAM/running state before disk.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`An organization implements a "clean desk policy." Which threat does this PRIMARILY mitigate?`,
+    opts:["Phishing attacks targeting employees","Physical shoulder surfing and unauthorized access to printed sensitive documents","Tailgating into secured areas","Insider threat data exfiltration via USB drives"],
+    answer:1,
+    exp:`A <strong>clean desk policy</strong> requires that employees clear their workstations of sensitive documents, notes, and credentials when leaving (end of day, during breaks). This primarily mitigates <strong>physical information disclosure</strong>: shoulder surfing by passersby, unauthorized access to printed PII/confidential documents, and loss of physical documents containing sensitive information. It does not address digital threats.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`A SIEM ingests logs from 200 sources and generates 10,000 alerts daily. The SOC team can only investigate 200 alerts per day. What process should be implemented to address this gap?`,
+    opts:["Buy more SIEM storage","Implement alert triage and prioritization based on asset criticality, threat intelligence, and risk score","Disable noisy log sources to reduce volume","Outsource all alert investigation to a third party"],
+    answer:1,
+    exp:`<strong>Alert triage and prioritization</strong> is the critical SOC process for managing alert volume. Effective triage correlates alerts with asset criticality (is the affected system mission-critical?), threat intelligence (is this a known active threat actor TTP?), and risk scores to prioritize which alerts are investigated first. SOAR (Security Orchestration, Automation and Response) platforms can automate initial triage and handle routine alerts, freeing analysts for high-priority investigations.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`An organization discovers that an employee has been exfiltrating source code by printing it and taking the physical copies home. Which DLP control would have MOST likely prevented this?`,
+    opts:["Network DLP monitoring outbound email","Endpoint DLP with print monitoring and watermarking","Encryption of source code repositories","USB device control policies"],
+    answer:1,
+    exp:`<strong>Endpoint DLP with print monitoring</strong> can detect when sensitive content (classified by content analysis) is sent to a printer and can block/alert on unauthorized print jobs. <strong>Watermarking</strong> printed documents enables tracing the source of leaked copies. Network DLP, encryption, and USB controls do not address physical printing. This scenario highlights that DLP must cover all data egress paths, including physical.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`A security team receives threat intelligence indicating that a specific threat actor group uses a known C2 domain. The team adds the domain to DNS blocklists. Which threat intelligence category does this represent?`,
+    opts:["Strategic intelligence","Tactical intelligence — TTPs","Operational intelligence","Technical intelligence — IOCs"],
+    answer:3,
+    exp:`A specific <strong>C2 domain</strong> is an <strong>Indicator of Compromise (IOC)</strong>, which is a form of <strong>technical (tactical) intelligence</strong> used at the operational level to directly inform defensive controls (blocklists, SIEM rules). Strategic intelligence concerns high-level threat landscape trends. Operational intelligence concerns specific campaigns. TTPs (tactics, techniques, procedures) are harder to change and more valuable long-term than IOCs.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`A penetration test reveals that a web application allows OS command injection via an unvalidated parameter. The developer argues: "we validate the input client-side in JavaScript — users can't send bad values." Why is this defense INSUFFICIENT?`,
+    opts:["JavaScript validation is too slow for server-side processing","Client-side validation can be trivially bypassed by an attacker who intercepts and modifies the HTTP request directly (e.g., using Burp Suite)","The web server automatically sanitizes JavaScript values before processing","Client-side validation is sufficient if HTTPS is used"],
+    answer:1,
+    exp:`<strong>Client-side validation</strong> provides UX convenience but zero security — an attacker can intercept the HTTP request using a proxy (Burp Suite, OWASP ZAP) and modify parameters after JavaScript has validated them. The server receives the raw HTTP request, not the browser's validated version. <strong>Server-side input validation and parameterized commands</strong> are the only effective defenses against injection attacks.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`An organization stores backup tapes offsite at a third-party facility. During a recovery test, they discover the tapes are unreadable due to media degradation. What backup strategy failure caused this?`,
+    opts:["Insufficient backup frequency","Failure to test restores — backup validity was assumed, not verified","Inadequate offsite distance from the primary facility","Using tape instead of cloud storage"],
+    answer:1,
+    exp:`The cardinal rule of backup: <strong>an untested backup is not a backup</strong>. Media degradation, software incompatibility, and corruption can silently render backups unrestorable. Regular <strong>restore tests</strong> — actually recovering data from backup media — are essential. This is a process failure: backups were created but never validated through recovery testing. Media rotation schedules also help address degradation.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`A security analyst receives a phishing email containing a malicious attachment. The analyst wants to analyze the malware safely. Which environment is MOST appropriate for dynamic analysis?`,
+    opts:["The analyst's production workstation with antivirus enabled","A fully patched physical machine with no network access","An isolated virtual machine (sandbox) with network monitoring, snapshot capability, and no connection to production systems","The organization's development server with restricted internet access"],
+    answer:2,
+    exp:`An <strong>isolated sandbox VM</strong> with snapshot capability is ideal: (1) snapshots allow rollback to pre-infection state, (2) network isolation prevents malware spreading to production, (3) network monitoring captures C2 connections and exfiltration attempts, (4) virtualization allows process, file system, and registry monitoring. Production systems risk spreading infection. Physical machines without snapshots are harder to restore.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`A vulnerability scanner reports a critical vulnerability in a public-facing web server. The vendor has not released a patch. What is the MOST appropriate immediate security response?`,
+    opts:["Shut down the web server until a patch is released","Implement a WAF rule or virtual patching to block exploitation attempts until the vendor patch is available","Accept the risk and wait for the vendor patch","Move the web server behind a VPN to reduce exposure"],
+    answer:1,
+    exp:`<strong>Virtual patching</strong> (implementing a WAF rule that blocks requests matching the vulnerability's exploitation pattern) provides immediate protection without requiring the unavailable vendor patch. This is a standard compensating control when a patch doesn't exist or cannot be applied immediately. Shutting down the server may be too disruptive. Accepting the risk for a public-facing critical vulnerability is inappropriate without compensating controls.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`Which concept describes the practice of automatically granting elevated privileges to an administrator for a specific task only when needed, and revoking those privileges immediately after the task is complete?`,
+    opts:["Role-based access control","Just-in-time (JIT) privileged access / ephemeral privileges","Separation of duties","Break-glass account management"],
+    answer:1,
+    exp:`<strong>Just-in-Time (JIT) privileged access</strong> implements the principle of least privilege by granting elevated permissions <em>only when needed, for only as long as needed</em>, then automatically revoking them. This minimizes the window during which compromised credentials can be abused and reduces standing privilege — a key Zero Trust and PAM principle. Break-glass accounts are for emergency access, not routine JIT.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`During a forensic investigation, the analyst must preserve a chain of custody for digital evidence. Which action is MOST critical to maintain chain of custody?`,
+    opts:["Encrypting all evidence files with AES-256","Documenting every person who handled the evidence, when, and for what purpose, from collection through court presentation","Storing evidence on the fastest available storage media","Creating at least three copies of all evidence files"],
+    answer:1,
+    exp:`<strong>Chain of custody</strong> is the documented chronological record of who collected, handled, transferred, analyzed, and stored evidence. It must be unbroken from collection to court presentation. Any gap can result in evidence being ruled inadmissible. Hashing evidence files (for integrity) and secure storage are important, but the <em>human documentation trail</em> of custody is the defining chain-of-custody requirement.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`A SOC analyst uses threat intelligence to learn that a nation-state APT group uses a specific DLL side-loading technique. This intelligence about adversary behavior is categorized as:`,
+    opts:["Strategic intelligence","Technical IOC intelligence","TTP-level (Tactics, Techniques, Procedures) intelligence","Operational intelligence about a specific campaign"],
+    answer:2,
+    exp:`<strong>TTP-level intelligence</strong> (Tactics, Techniques, and Procedures) describes HOW adversaries operate — their methods and behaviors — rather than specific artifacts (IOCs like IP addresses or hashes). TTPs map to the MITRE ATT&CK framework. This type of intelligence is the most valuable and persistent because adversaries can easily change IPs and hashes, but changing their fundamental techniques is much harder.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`An organization's vulnerability management program has identified 500 vulnerabilities. The security team cannot remediate all of them immediately. Which approach provides the MOST defensible prioritization strategy?`,
+    opts:["Patch all Critical CVSS score vulnerabilities first, then High, Medium, Low in order","Prioritize by CVSS score alone","Combine CVSS score with asset criticality, exploitability in the wild (EPSS/CISA KEV), and compensating control coverage for risk-based prioritization","Patch the 10 newest vulnerabilities first regardless of severity"],
+    answer:2,
+    exp:`CVSS scores alone are insufficient for prioritization — a Critical vulnerability on a non-critical isolated internal system is less urgent than a High vulnerability on an internet-facing critical asset with known active exploitation. Risk-based prioritization combines: <strong>CVSS severity + asset criticality + CISA KEV (Known Exploited Vulnerabilities) / EPSS (Exploit Prediction Scoring System) + compensating controls</strong>. This is the most defensible and effective approach.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`An attacker uses a technique where they place a malicious DLL in the same directory as a legitimate application, which then loads the malicious DLL instead of the legitimate system DLL. What is this technique called?`,
+    opts:["Process injection","DLL side-loading / DLL hijacking","Binary planting","Reflective DLL injection"],
+    answer:1,
+    exp:`<strong>DLL hijacking (side-loading)</strong> exploits Windows DLL search order — applications search the current directory before system directories. Placing a malicious DLL with the same name as a legitimate DLL in the application's directory causes the application to load and execute the malicious code with the application's privileges. This is a common persistence and privilege escalation technique in Windows environments.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`A security team implements a SOAR platform. Which capability is the PRIMARY differentiator between a SOAR and a traditional SIEM?`,
+    opts:["SOAR stores more log data than SIEM","SOAR can automatically execute response actions (containment, remediation) based on playbooks, while SIEM primarily correlates and alerts","SOAR provides better threat intelligence feeds than SIEM","SOAR monitors endpoint activity while SIEM monitors network traffic"],
+    answer:1,
+    exp:`A <strong>SOAR (Security Orchestration, Automation and Response)</strong> platform adds automated response workflows (playbooks) that can take actions like: isolating endpoints, blocking IPs at the firewall, disabling compromised accounts, enriching alerts with threat intelligence — all automatically upon alert triggering. A SIEM correlates logs and generates alerts but requires <em>human action</em> for response. SOAR reduces mean time to respond (MTTR).`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`A system administrator notices a Linux server has an unusual entry in /etc/cron.d/ that runs a script every 5 minutes from /tmp. What attacker technique does this MOST likely represent?`,
+    opts:["Defense evasion via log deletion","Persistence via cron-based scheduled task","Privilege escalation via cron SUID abuse","Discovery via automated enumeration script"],
+    answer:1,
+    exp:`Creating a cron job that runs at regular intervals is a classic <strong>persistence mechanism</strong> (MITRE ATT&CK T1053 - Scheduled Task/Job). The script in /tmp (a world-writable directory typically not monitored as closely as /usr or /opt) adds obfuscation. This ensures the attacker's code runs even after reboot or if the initial access method is remediated. Monitoring /etc/cron.d/, /var/spool/cron/, and /etc/crontab for unauthorized entries is a key detection control.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`An organization's security policy requires that all privileged access be logged to an immutable, centralized log repository. An administrator deletes security logs directly from a compromised server. What control prevents this from being an effective cover-up?`,
+    opts:["Antivirus on the server detects log deletion","Centralized, write-once SIEM with tamper-evident logging where logs are shipped in real-time","File integrity monitoring on local log files","Requiring dual authorization for log access"],
+    answer:1,
+    exp:`A <strong>centralized SIEM with real-time log forwarding to immutable/write-once storage</strong> ensures that even if an attacker deletes local logs, the events have already been forwarded and stored in a tamper-resistant location. The attacker can't retroactively delete what was already shipped. Syslog over TLS to a hardened log server or cloud-based SIEM is the standard implementation. Local FIM can detect deletion but can't prevent it or preserve the deleted content.`
+  },
+  {
+    domain:"D5", domainLabel:"Security Operations",
+    q:`An internal red team discovers they can access any employee's workstation by exploiting default credentials on the organization's remote management software (IPMI/iDRAC). What vulnerability class does this represent, and which CIS Control addresses it?`,
+    opts:["Missing patches; CIS Control 7 (Continuous Vulnerability Management)","Default/unchanged credentials on hardware/software; CIS Control 4 (Secure Configuration) / CIS Control 5 (Account Management)","Weak encryption; CIS Control 10 (Data Recovery)","Missing MFA; CIS Control 6 (Access Control Management)"],
+    answer:1,
+    exp:`<strong>Default credentials</strong> that are never changed represent a <strong>secure configuration failure</strong> — a well-known and easily exploitable vulnerability. CIS Control 4 (Secure Configuration of Enterprise Assets) specifically addresses configuring systems securely including changing default credentials. CIS Control 5 (Account Management) covers managing accounts and credentials. Default credentials on IPMI/iDRAC (out-of-band management) are particularly dangerous as they provide hardware-level access.`
+  }
+];
+
+let score = 0, wrong = 0, answered = 0;
+const total = QUESTIONS.length;
+let currentFilter = 'all';
+
+function buildQuestions(){
+  const container = document.getElementById('questions-container');
+  container.innerHTML = '';
+  QUESTIONS.forEach((q, i) => {
+    const visible = currentFilter === 'all' || q.domain === currentFilter;
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = 'q-card-' + i;
+    card.style.display = visible ? '' : 'none';
+
+    const optsHTML = q.opts.map((opt, j) => {
+      const letters = ['A','B','C','D'];
+      return `<div class="option" id="opt-${i}-${j}" onclick="selectAnswer(${i},${j})">
+        <span class="opt-letter">${letters[j]}</span>
+        <span class="opt-text">${opt}</span>
+      </div>`;
+    }).join('');
+
+    const domainColors = {D1:'#ff9f43',D2:'#ee5a24',D3:'#00d2d3',D4:'#54a0ff',D5:'#5f27cd'};
+
+    card.innerHTML = `
+      <div class="q-header">
+        <span class="q-num">#${String(i+1).padStart(2,'0')}</span>
+        <span class="q-domain" style="border-color:${domainColors[q.domain]}40;color:${domainColors[q.domain]}">${q.domainLabel}</span>
+        <div class="q-text">${q.q}</div>
+      </div>
+      <div class="options">${optsHTML}</div>
+      <div class="explanation" id="exp-${i}">
+        <strong>✓ Explanation:</strong> ${q.exp}
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function selectAnswer(qIdx, optIdx){
+  const q = QUESTIONS[qIdx];
+  const opts = document.querySelectorAll(`[id^="opt-${qIdx}-"]`);
+  if(opts[0].classList.contains('locked')) return;
+
+  opts.forEach(o => o.classList.add('locked'));
+  const isCorrect = optIdx === q.answer;
+
+  opts[q.answer].classList.add('correct');
+  if(!isCorrect){
+    opts[optIdx].classList.add('wrong');
+    wrong++;
+    document.getElementById('wrong-display').textContent = wrong;
+  } else {
+    score++;
+    document.getElementById('score-display').textContent = score;
+  }
+  answered++;
+  document.getElementById('remain-display').textContent = total - answered;
+  const pct = Math.round((score / answered) * 100);
+  document.getElementById('pct-display').textContent = pct + '%';
+
+  document.getElementById('exp-' + qIdx).classList.add('show');
+  document.getElementById('q-card-' + qIdx).classList.add('answered');
+
+  if(answered === total){
+    setTimeout(showResults, 600);
+  }
+}
+
+function showResults(){
+  const pct = Math.round((score / total) * 100);
+  let grade, color;
+  if(pct >= 90){ grade = '💀 ELITE — You belong in the SOC'; color = '#39ff14'; }
+  else if(pct >= 80){ grade = '⚡ STRONG PASS — Well above 700/1000 threshold'; color = '#00d4ff'; }
+  else if(pct >= 70){ grade = '⚠️ BORDERLINE — Review weak domains before exam'; color = '#ffd700'; }
+  else { grade = '🔥 FAIL — More study needed, especially edge cases'; color = '#ff3e6c'; }
+
+  document.getElementById('modal-score-text').textContent = `${score} / ${total}`;
+  document.getElementById('modal-score-text').style.color = color;
+  document.getElementById('modal-grade-text').textContent = grade;
+  document.getElementById('modal-bar').style.width = pct + '%';
+  document.getElementById('results-modal').classList.add('show');
+}
+
+function filterDomain(domain, btn){
+  currentFilter = domain;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  QUESTIONS.forEach((q, i) => {
+    const card = document.getElementById('q-card-' + i);
+    card.style.display = (domain === 'all' || q.domain === domain) ? '' : 'none';
+  });
+}
+
+function resetAll(){
+  if(!confirm('Reset all answers? This cannot be undone.')) return;
+  score = 0; wrong = 0; answered = 0;
+  document.getElementById('score-display').textContent = '0';
+  document.getElementById('wrong-display').textContent = '0';
+  document.getElementById('remain-display').textContent = total;
+  document.getElementById('pct-display').textContent = '—';
+  buildQuestions();
+}
+
+buildQuestions();
+</script>
+</body>
+</html>
